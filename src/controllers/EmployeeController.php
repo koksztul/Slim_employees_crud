@@ -142,8 +142,9 @@ class EmployeeController extends BaseController
      */
     private function updateEmployee($name, $surname, $address, $pesel, $id): void
     {
-        $query = $this->db->prepare("UPDATE employees SET `name`=:name, `surname`=:surname, `address`=:address, `pesel`=:pesel WHERE id=" . $id);
+        $query = $this->db->prepare("UPDATE employees SET `name`=:name, `surname`=:surname, `address`=:address, `pesel`=:pesel WHERE id=:id");
         $query->execute([
+            "id" => $id,
             "name" => $name,
             "surname" => $surname,
             "address" => $address,
@@ -179,8 +180,10 @@ class EmployeeController extends BaseController
      */
     private function getEmployee($id): Employee
     {
-        $query = $this->db->query('SELECT * FROM employees WHERE id=' . $id);
-        $query->execute();
+        $query = $this->db->prepare("SELECT * FROM employees WHERE id=:id");
+        $query->execute([
+            "id" => $id,
+        ]);
         $result = $query->fetch();
         $employee = new Employee();
         return $employee->create($result);
