@@ -1,7 +1,7 @@
 <?php
 return [
     'settings' => [
-        'displayErrorDetails' => true,
+        'displayErrorDetails' => false,
         'db' => [
             'host' => '127.0.0.1',
             'dbname' => 'slimdb',

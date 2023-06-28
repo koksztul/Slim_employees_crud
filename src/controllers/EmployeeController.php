@@ -170,7 +170,7 @@ class EmployeeController extends BaseController
             $employee = new Employee();
             $employees[] = $employee->createAsArray($row);
         }
-        return $employees;
+        return $employees ?? [];
     }
 
     /**
