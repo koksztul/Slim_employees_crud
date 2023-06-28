@@ -1,0 +1,73 @@
+{{ include("partials/header.twig") }}
+<div class="container pt-5 mt-5">
+    <div class="row">
+        <div class="col-lg-8 mx-auto">
+            {% if successMessage is not empty %}
+                <div class="alert alert-success" role="alert">
+                    {{ successMessage }}
+                </div>
+            {% endif %}
+            <table id="employeesTable" class="table table-bordered data-tabl table-striped" style="width:100%">
+            <thead class="thead-dark">
+            <tr>
+                <th>Name</th>
+                <th>Surname</th>
+                <th>Address</th>
+                <th>Pesel</th>
+                <th>Birthdate</th>
+                <th>Sex</th>
+                <th>Action</th>
+            </tr>
+            </thead>
+            <tbody>
+            </tbody>
+        </table>
+        </div>
+    </div>
+</div>
+{{ include("partials/footer.twig") }}
+<script>
+$(document).ready(function() {
+    $('#employeesTable').DataTable({
+        ajax: '{{ path_for('employees.list') }}',
+        type: "GET",
+        datatype: "json",
+        columns: [
+            {data: 'name', name: 'name'},
+            {data: 'surname', name: 'surname'},
+            {data: 'address', name: 'address'},
+            {data: 'pesel', name: 'pesel'},
+            {data: 'birthdate', name: 'birthdate'},
+            {data: 'sex', name: 'sex'},
+            { 
+                "data": "action",                   
+                "render": function ( data, type, row ) {
+                    var id = row.id;
+                    var actionBtns = `<a href="{{ path_for('employees.view', { 'id': '${id}' }) }}"><i class="fa fa-eye fa-fw"></i></a>&nbsp;&nbsp;
+                                    <a href="{{ path_for('employees.edit', { 'id': '${id}' }) }}"><i class="fa fa-edit fa-fw"></i></a>&nbsp;&nbsp;
+                                    <a href="javascript:void(0);" data-id="${id}" class="delete-employee"><i class="fa fa-trash fa-fw"></i></a>`;
+                    return actionBtns;
+                }
+            },
+        ],
+    });
+    $('body').on('click', '.delete-employee', function () {
+        var employeeId = $(this).data("id");
+        check = confirm("Delete Employee?");
+        if(check){
+            var deleteUrl = '{{ path_for('employees.delete', { 'id': ':id' }) }}';
+            deleteUrl = deleteUrl.replace(':id', employeeId);
+            $.ajax({
+                url: deleteUrl,
+                type: 'DELETE',
+                success: function(data, textStatus, xhr) {
+                    if(xhr.status == 204) {
+                        location.reload();
+                    }
+                },
+            });
+        }
+        return false;
+    });
+});
+</script>
